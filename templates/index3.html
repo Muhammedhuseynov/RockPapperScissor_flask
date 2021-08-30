@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+    <title>RockPapperScissor</title>
+</head>
+<style>
+    body{
+        background-color: black;
+    }
+.card {
+        margin: 0 auto; /* Added */
+        float: none; /* Added */
+        margin-bottom: 10px; /* Added */
+}
+</style>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark" style="margin-bottom: 25px;">
+        <a class="btn btn-outline-success my-2 my-sm-0" href="/">Back To take Picture</a>  
+    </nav>
+    {%if winner == "human" %}
+    <div class="alert alert-success">
+        <center><strong>💡Congratulations!🎉</strong>You Win</center>
+      </div>
+    {% elif winner == "draw" %}
+    <div class="alert alert-info">
+        <center><strong>Draw😄 </strong>Try Again!🔄</center>
+    </div>
+    {% else %} 
+    <div class="alert alert-primary">
+        <center><strong>Ooops..</strong>I won🤖</div></center> 
+    {% endif %}
+    </div>
+    </div>
+    <div class="container">
+        <div class="card-group">
+    
+            <!--bootstrap card with 3 horizontal images-->
+            <div class="row">
+                <div class="card col-md-4 bg-dark">
+                    {% if winner == "human" %}
+                    <h3 class="card-title text-success">Human</h3>
+                    {% elif winner == "draw" %}
+                    <h3 class="card-title text-success">Human</h3>
+                    {% else %} 
+                    <h3 class="card-title text-light">Human</h3>
+                    {% endif %} 
+
+                    <img src="../static/imgs/im.jpg" alt="">
+                    <div class="card-body">
+                        {% if winner == "human" %}
+                        <h3 class="card-title text-success">{{predictedHand}}</h3>
+                        {% elif winner == "draw" %}
+                        <h3 class="card-title text-success">{{predictedHand}}</h3>
+                        {% else %}
+                        <h3 class="card-title text-light">{{predictedHand}}</h3>
+                        {% endif %}
+                    </div>
+                </div>
+    
+                <div class="card col-md-4 bg-dark">
+                    {% if winner != "human" %}
+                    <h3 class="card-title text-success">Computer</h3>
+                    {% elif winner == "draw" %}
+                    <h3 class="card-title text-success">Computer</h3>
+                    {% else %} 
+                    <h3 class="card-title text-light">Computer</h3>
+                    {% endif %}
+                    <img src={{robotHand}} alt="">
+                    <div class="card-body">
+                        {% if winner != "human" %}
+                        <h3 class="card-title text-success">{{resultRobotHand}}</h3>
+                        {% elif winner == "draw" %}
+                        <h3 class="card-title text-success">{{resultRobotHand}}</h3>
+                        {% else %} 
+                        <h3 class="card-title text-primary">{{resultRobotHand}}</h3>
+                        
+                        {% endif %}
+                        
+                    </div>
+                </div>
+                  
+                
+            </div>
+        </div>
+    </div>  
+
+
+</body>
+</html>

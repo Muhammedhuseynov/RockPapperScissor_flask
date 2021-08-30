@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CamOpen</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="webcamjs-master\\webcam.min.js"></script> -->
+</head>
+
+<style type="text/css">
+    /*.container{
+        margin-left: 50%;
+    }*/
+    body{
+        background-color: black;
+    }
+.card {
+
+        margin: 0 auto; /* Added */
+        float: none; /* Added */
+        margin-bottom: 100px; /* Added */
+       
+}
+video,canvas {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+</style>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark" style="margin-bottom: 25px;">
+        <a class="btn btn-outline-success my-2 my-sm-0" href="/">👤🤜🤛🤖</a>  
+    </nav>
+    {% if winner  == "notHand" %}
+    <div class="alert alert-danger">
+        <center><strong>Please only show your HAND!!!</strong></center>
+      </div>
+
+    {% endif %} 
+    
+
+
+<div class="container">
+    <div class="card-group">
+
+        <!--bootstrap card with 3 horizontal images-->
+        <div class="row">
+            <div class="card col-md-4 bg-dark">
+                <h3 class="card-title text-primary">Camera</h3>
+                <!-- <canvas class="rounded float-left" name="userHand" id="canvas" width="500" height="500"></canvas> -->
+                <video id="video" width="100%" height="100%" autoplay=""></video>
+                <a href="#!" class="btn btn-danger" onClick="stop()">Stop Cam</a>
+                <a href="#!" class="btn btn-success"
+                        onClick="start()">
+                        Start Cam
+                </a>
+
+    
+    <form action="/result" class="text-center" method="post" enctype="multipart/form-data">
+        <button type="submit" style="width: 100%;" onclick="takePhot()" class="btn btn-success">
+            ✊🖐️✌️
+        </button>
+       </form>
+                
+            </div>
+
+            <div class="card col-md-4 bg-dark">
+                {% if winner  == "notHand" %}
+                <h3 class="card-title text-danger">Your Hand</h3>
+                {% else %}
+                <h3 class="card-title text-primary">Your Hand</h3>
+                {% endif %}
+                <canvas class="rounded float-right" id="canvas" width="500" height="500"></canvas>
+                  
+                <!-- <div class="card-body">
+                    <h3 class="card-title text-primary">asdsd</h3>
+                    <p class="card-text">Score | 0</p>
+                </div> -->
+            </div>
+              
+            
+        </div>
+    </div>
+</div>  
+
+
+
+
+
+
+<!-- <div id="camContainer"></div> -->
+<!-- <div id="picture_from_cam"></div> -->
+</body>
+
+<script>
+    // alert("Welcome! Click ✊🖐️✌️ this Button.\nIt will take a picture your Hand")
+    var isOpenCam = false
+    var stop = function(){
+        var stream = video.srcObject;
+        var tracks = stream.getTracks();
+        for(var i = 0;i < tracks.length;i++){
+            var track = tracks[i];
+            isOpenCam = false
+            track.stop()
+        }
+        video.srcObject = null
+    }
+    var start = function (){
+        isOpenCam =true
+        var video = document.getElementById('video'),
+        vendorUrl = window.URL || window.webkitURL;
+        
+        if(navigator.mediaDevices.getUserMedia){
+            
+            navigator.mediaDevices.getUserMedia({video:true}).then(
+                    function (stream) {
+                        
+                        video.srcObject = stream;
+                        
+                    }
+                ).catch(function (error){
+                    console.log("SMTH wrong!")
+                })
+        }
+    }
+
+    $(function(){
+        start();
+    })
+    
+    // conver b64 to blob for img
+    function b64toBlob(b64Data, contentType, sliceSize) {
+        contentType = contentType || '';
+        sliceSize = sliceSize || 512;
+
+        var byteCharacters = atob(b64Data);
+        var byteArrays = [];
+
+        for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+            var byteNumbers = new Array(slice.length);
+            for (var i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            var byteArray = new Uint8Array(byteNumbers);
+
+            byteArrays.push(byteArray);
+        }
+
+      var blob = new Blob(byteArrays, {type: contentType});
+      return blob;
+}
+    // Trigger photo take
+    function takePhot(){
+        if(isOpenCam != false){
+            var video = document.getElementById('video');
+
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
+        
+        
+
+        // var canvas2 = document.getElementById('canvas2');
+        // var context2 = canvas2.getContext('2d');
+        
+
+        context.drawImage(video, 0, 0, 500, 500);
+        // context2.drawImage(video, 0, 0, 500, 500);
+        
+        var data = canvas.toDataURL('image/jpeg');
+
+        // Split the base64 string in data and contentType
+        var block = data.split(";")
+
+        // Get the content type of the image
+        var contentType = block[0].split(":")[1]
+
+        // get the real base64 content of the file
+        var realData = block[1].split(",")[1]
+
+        // Convert it to a blob to upload
+        var blob = b64toBlob(realData,contentType)
+        
+        // console.log(canvas.toDataURL('image/jpeg'))
+        var request = new XMLHttpRequest();
+        request.open("POST", '/');
+        request.send(blob);
+        }else{
+            alert("🥺Please Open Camera")
+        }
+        
+        
+        
+    }
+</script>
+
+</html>
